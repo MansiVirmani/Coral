@@ -1,3 +1,4 @@
+import com.android.uiautomator.core.UiCollection;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
@@ -16,8 +17,8 @@ public class SettingsTest extends UiAutomatorTestCase {
         UiObject setingsIcon_UiObject = new UiObject(settingIcon_UiSelector);
 
         if (setingsIcon_UiObject.click()) {
-            UiSelector CheckBox = new UiSelector().packageName("com.android.settings").className("android.widget.CheckBox");
-            UiObject AirPlane_CheckBox = new UiObject(CheckBox);
+            UiCollection Linear=new UiCollection(new UiSelector().packageName("com.android.settings").className("android.widget.LinearLayout").resourceId("com.android.settings:id/header_connection_airplane_mode"));
+            UiObject AirPlane_CheckBox=Linear.getChild(new UiSelector().resourceId("com.android.settings:id/check_check"));
             if (!AirPlane_CheckBox.isChecked()) {
                 AirPlane_CheckBox.click();
                 System.out.println("Success");
