@@ -11,6 +11,7 @@
     <orderEntry type="library" name="uiautomator" level="project" />
     <orderEntry type="library" name="libphonenumber-5.3" level="project" />
     <orderEntry type="library" name="commons-validator" level="project" />
+    <orderEntry type="library" name="commons-validator-1.4.0" level="project" />
   </component>
 </module>
 
