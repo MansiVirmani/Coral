@@ -1,3 +1,5 @@
 *workspace.xml
+Tringoo/.idea/ant.xml
 bin/
 Tringoo/build/*
+Tringoo/out/*
