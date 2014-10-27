@@ -9,59 +9,74 @@ import java.io.IOException;
  */
 public class TringooUtils {
 
-    public static String PackageName_Stag="kujo.app.alpha";
-    public static String PackageName_Prod="kujo.app";
-    public static UiObject Staging_Inf = new UiObject(new UiSelector().packageName(PackageName_Stag));
-    public static UiObject Prod_Inf = new UiObject(new UiSelector().packageName(PackageName_Prod));
+    public static final String PACKAGE_NAME_STAG ="kujo.app.alpha";
+    public static final String PACKAGE_NAME_PROD ="kujo.app";
+    public static UiObject _stagingInf = new UiObject(new UiSelector().packageName(PACKAGE_NAME_STAG));
+    public static UiObject prodInf = new UiObject(new UiSelector().packageName(PACKAGE_NAME_PROD));
     public static  String _packageName;
-    public static String FirstName,LastName,Phone,Email;
+    public static String firstName, lastName, phone, email;
 
-    public TringooUtils()
+    public TringooUtils(ENV env)
     {
-        SetSignUpInputs();
+        setSignUpInputs(env);
     }
 
-    public void SetSignUpInputs()
+    public void setSignUpInputs(ENV env)
     {
-        FirstName="Mansi";
-        LastName="Virmani";
-        Phone="7042393707";
-        Email="mansivirmani18@gmail.com";
+        firstName ="Mansi";
+        lastName ="Virmani";
+        phone ="7042393707";
+        email ="mansivirmani18@gmail.com";
+        _packageName = getPackageName(env);
+    }
 
+    private String getPackageName(ENV env) {
+        if(env == ENV.PROD){
+            return PACKAGE_NAME_PROD;
+        }
+        else
+        {
+            return PACKAGE_NAME_STAG;
+        }
     }
-    public UiObject GetUiObjectByText(String text)
+
+    public UiObject getUiObjectByText(String text)
     {
-        return new UiObject(new UiSelector().packageName(PackageName_Stag).text(text));
+        return new UiObject(new UiSelector().packageName(_packageName).text(text));
     }
-    public UiObject GetUiObjectByResourceId(String ResId)
+    public UiObject getUiObjectByResourceId(String ResId)
     {
-        return new UiObject(new UiSelector().packageName(PackageName_Stag).resourceId(ResId));
+        return new UiObject(new UiSelector().packageName(_packageName).resourceId(ResId));
     }
     UiObject GetUiObjectByClass(String Class)
     {
-        return new UiObject(new UiSelector().packageName(PackageName_Stag).className(Class));
+        return new UiObject(new UiSelector().packageName(_packageName).className(Class));
     }
-    UiObject GetUiObjectByDescription(String Desc)
+    UiObject getUiObjectByDescription(String Desc)
     {
-        return new UiObject(new UiSelector().packageName(PackageName_Stag).descriptionContains(Desc));
+        return new UiObject(new UiSelector().packageName(_packageName).descriptionContains(Desc));
     }
 
-    public static boolean SetAppPackageName() throws UiObjectNotFoundException {
+    public static boolean selectAppPackageName() throws UiObjectNotFoundException {
 
-        if (Staging_Inf.exists()){
-            _packageName = PackageName_Stag;
+        if (_stagingInf.exists()){
+            _packageName = PACKAGE_NAME_STAG;
             return true;
         }
-        else if (Prod_Inf.exists()){
-            _packageName = PackageName_Prod;
+        else if (prodInf.exists()){
+            _packageName = PACKAGE_NAME_PROD;
             return true;
         } else return false;
     }
 
-    public void ClearAppData() throws IOException, InterruptedException {
+    public void clearAppData() throws IOException, InterruptedException {
         String queryString = "pm clear " + _packageName;
 
         Runtime.getRuntime().exec(queryString);
         Thread.sleep(2000);
+    }
+
+    public enum ENV{
+        STAGING, PROD
     }
 }

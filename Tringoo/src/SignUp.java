@@ -2,11 +2,9 @@ import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
-import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.commons.validator.routines.EmailValidator;
-import java.io.IOException;
+
 import java.util.logging.Logger;
 
 /**
@@ -16,14 +14,14 @@ public class SignUp extends UiAutomatorTestCase {
 
     //String _PackageName_Stag = ";
     public static Logger Tlogger = new TringooLogger().SetLogger();
-    TringooUtils Utils=new TringooUtils();
+    TringooUtils Utils=new TringooUtils(TringooUtils.ENV.STAGING);
 
-    UiObject Next=Utils.GetUiObjectByResourceId("kujo.app.alpha:id/next_button");
-    UiObject FirstName= Utils.GetUiObjectByResourceId("kujo.app.alpha:id/first_name");
-    UiObject LastName=Utils.GetUiObjectByResourceId("kujo.app.alpha:id/last_name");
-    UiObject Phone=Utils.GetUiObjectByResourceId("kujo.app.alpha:id/phone_number");
-    UiObject CountryCode=Utils.GetUiObjectByResourceId("kujo.app.alpha:id/country_code_spinner");
-    UiObject EmailId=Utils.GetUiObjectByResourceId("kujo.app.alpha:id/email");
+    UiObject Next=Utils.getUiObjectByResourceId("kujo.app.alpha:id/next_button");
+    UiObject FirstName= Utils.getUiObjectByResourceId("kujo.app.alpha:id/first_name");
+    UiObject LastName=Utils.getUiObjectByResourceId("kujo.app.alpha:id/last_name");
+    UiObject Phone=Utils.getUiObjectByResourceId("kujo.app.alpha:id/phone_number");
+    UiObject CountryCode=Utils.getUiObjectByResourceId("kujo.app.alpha:id/country_code_spinner");
+    UiObject EmailId=Utils.getUiObjectByResourceId("kujo.app.alpha:id/email");
     Boolean FName_Empty, LName_Empty, Ph_Empty, Em_Empty,Ph_InValid,Em_Invalid;
     Boolean NextButton_EnabledValid;
 
@@ -52,10 +50,10 @@ public class SignUp extends UiAutomatorTestCase {
 
     private void SetSignUpInfo() throws UiObjectNotFoundException {
         Tlogger.info("Set Sign Up Info --> start");
-        FirstName.setText(TringooUtils.FirstName);
-        LastName.setText(TringooUtils.LastName);
-        Phone.setText(TringooUtils.Phone);
-        EmailId.setText(TringooUtils.Email);
+        FirstName.setText(TringooUtils.firstName);
+        LastName.setText(TringooUtils.lastName);
+        Phone.setText(TringooUtils.phone);
+        EmailId.setText(TringooUtils.email);
         Tlogger.info("Set Sign Up Info --> End");
     }
 
@@ -64,10 +62,10 @@ public class SignUp extends UiAutomatorTestCase {
         if (ValidationTest_NextEnabled()) {
             if (Next.clickAndWaitForNewWindow()) {
                 if(Ph_InValid || Em_Invalid) {
-                    if (Utils.GetUiObjectByResourceId("android:id/alertTitle").exists()) {
-                        Tlogger.info("Invalid Credentials" + Utils.GetUiObjectByResourceId("android:id/alertTitle").getText());
-                        UiObject OK = Utils.GetUiObjectByText("OK");
-                        UiObject Message = Utils.GetUiObjectByResourceId("android:id/message");
+                    if (Utils.getUiObjectByResourceId("android:id/alertTitle").exists()) {
+                        Tlogger.info("Invalid Credentials" + Utils.getUiObjectByResourceId("android:id/alertTitle").getText());
+                        UiObject OK = Utils.getUiObjectByText("OK");
+                        UiObject Message = Utils.getUiObjectByResourceId("android:id/message");
                         if (OK.isEnabled() && OK.isClickable() && OK.clickAndWaitForNewWindow()) {
                             Tlogger.info("Exit SignUp Error notification -->  " + (!Message.getText().isEmpty() ? Message.getText() : ""));
                            testSignUp();
@@ -93,12 +91,12 @@ public class SignUp extends UiAutomatorTestCase {
     }
 
     private void Validate_CallVerification() throws UiObjectNotFoundException {
-        UiObject LocalVerificationCall=Utils.GetUiObjectByText("Make a local verification call");
+        UiObject LocalVerificationCall=Utils.getUiObjectByText("Make a local verification call");
         if (LocalVerificationCall.exists()) {
-            if (Utils.GetUiObjectByText("Make a local verification call").isEnabled())
+            if (Utils.getUiObjectByText("Make a local verification call").isEnabled())
             {
             Tlogger.info("Making local verification Call --> Trigger");
-                if(Utils.GetUiObjectByText("Make a local verification call").clickAndWaitForNewWindow(60000))
+                if(Utils.getUiObjectByText("Make a local verification call").clickAndWaitForNewWindow(60000))
                 {
                     Tlogger.info("Trying Call verification");
                     if (new UiObject(new UiSelector().className("android.widget.LinearLayout").childSelector(new UiSelector().text("Local"))).exists())
@@ -167,15 +165,15 @@ public class SignUp extends UiAutomatorTestCase {
                 String RegionCode = Validate.getRegionCodeForCountryCode(Integer.parseInt(CCode));
                 Tlogger.info("4");
                 Tlogger.info(RegionCode);
-                Tlogger.info(Code+_PhoneNumber);
-                Phonenumber.PhoneNumber PH = Validate.parse(Code+_PhoneNumber, RegionCode);
+                Tlogger.info(Code + _PhoneNumber);
+                Phonenumber.PhoneNumber PH = Validate.parse(Code + _PhoneNumber, RegionCode);
                 Tlogger.info("5");
                 Ph_InValid = Validate.isValidNumber(PH);
 
                 Tlogger.warning(System.getProperty("line.separator") + "Phone Number is Invalid");
             }
         }
-        catch(NumberParseException e)
+        catch(Exception e)
         {
             Tlogger.severe(e.toString());
         }
@@ -190,10 +188,16 @@ public class SignUp extends UiAutomatorTestCase {
             Tlogger.warning(System.getProperty("line.separator") + "Email Address is Empty");
         }
         else {
-           EmailValidator Validate = EmailValidator.getInstance();
+          /* EmailValidator Validate = EmailValidator.getInstance();
             Em_Invalid = Validate.isValid(EmailId.getText());
             if (Em_Invalid)
-            Tlogger.warning(System.getProperty("line.separator") + "Email Address is Invalid");
+            */
+            if (!(EmailId.getText().contains("@") && EmailId.getText().contains(".") && !EmailId.getText().substring(EmailId.getText().indexOf("@"), EmailId.getText().indexOf(".")).isEmpty()
+                    && !EmailId.getText().substring(0, EmailId.getText().indexOf("@")).isEmpty()
+                    && !EmailId.getText().substring(EmailId.getText().indexOf("."), EmailId.getText().length() - 1).isEmpty())) {
+                Em_Invalid=false;
+                Tlogger.warning(System.getProperty("line.separator") + "Email Address is Invalid");
+            }
         }
         Tlogger.info("Validating Email ---> End");
     }
