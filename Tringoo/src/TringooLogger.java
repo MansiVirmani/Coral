@@ -2,7 +2,6 @@
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-//import org.omg.CORBA.Environment;
 /**
  * Created by mansi on 13/10/14.
  */
